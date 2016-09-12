@@ -16,31 +16,16 @@ import java.util.List;
  */
 public class AdapterAlarms extends BaseAdapter {
 
-    private List<BeanAlarms> mAlarmsBeanList;
+    public List<BeanAlarms> mAlarmsBeanList;
     private LayoutInflater mInflater;
 
 
-    public void addItem(List<BeanAlarms> abl)
+    public AdapterAlarms(Context context,  List<BeanAlarms> alarmslist)
     {
-        //Log.d("errrr","in");
-        if (!abl.isEmpty()) {
-            mAlarmsBeanList= abl;
-            if (mAlarmsBeanList.size() > 100)//最多显示100条
-                return;
-            notifyDataSetChanged();
-        }
-    }
-    public AdapterAlarms(Context context)
-    {
-        mAlarmsBeanList = new ArrayList<>();
+        mAlarmsBeanList = alarmslist;
         mInflater = LayoutInflater.from(context);
     }
 
-    public AdapterAlarms(Context context, List<BeanAlarms> data)
-    {
-        mAlarmsBeanList = data;
-        mInflater = LayoutInflater.from(context);
-    }
     @Override
     public int getCount() {
         return mAlarmsBeanList.size();

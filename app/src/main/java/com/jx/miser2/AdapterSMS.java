@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,18 +25,11 @@ public class AdapterSMS extends BaseAdapter{
     List<BeanSMS> mMsgList;
 
 
-    public void addItem(List<BeanSMS> abl)
-    {
-        //Log.d("errrr","in");
-        if (!abl.isEmpty()) {
-            mMsgList = abl;
-            notifyDataSetChanged();
-        }
-    }
-    public AdapterSMS(Context context, List<BeanSMS> arr){
+
+    public AdapterSMS(Context context, List<BeanSMS> smslist){
         this.mContext=context;
         this.mInflater=LayoutInflater.from(context);
-        this.mMsgList=arr;
+        this.mMsgList= smslist;//new ArrayList<BeanSMS>();
     }
 
     @Override

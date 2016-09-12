@@ -1,6 +1,7 @@
 package com.jx.miser2;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,7 +47,7 @@ public class IntentServiceHttp extends IntentService {
     private static String ENTRUSTURL = "http://t.10jqka.com.cn/trace/trade/getEntrust/?_=";
     private List<BeanSMS> mMsgBeanList = new ArrayList<BeanSMS>();
     private List<BeanAlarms> mAlarmsBeanList = new ArrayList<BeanAlarms>();
-    //private List<AlarmsBean> mNewAlarmsBeanList = new ArrayList<AlarmsBean>();
+    private List<BeanAlarms> mNewAlarmsBeanList = new ArrayList<BeanAlarms>();
     private ArrayList mlist = new ArrayList();//消息广播传递参数不能为局部变量，可能被销毁
     private String mcookstr;//保存cookies
    //// private Logger gLogger;
@@ -98,6 +99,7 @@ public class IntentServiceHttp extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("miserIntentService","onStartCommand");
+        flags = Service.START_STICKY;//设置为粘滞服务
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -116,10 +118,9 @@ public class IntentServiceHttp extends IntentService {
 
     private void getConversationAndSendIntent()
     {
-        CHATURL += pid;
+        String url = CHATURL + pid;
         try {
-            mMsgBeanList.clear();
-            mReqBuilderC.url(CHATURL);
+            mReqBuilderC.url(url);
             Request request = mReqBuilderC.build();
             Response response = mOkHttpClient.newCall(request).execute();
             String resString = response.body().string();
@@ -151,6 +152,7 @@ public class IntentServiceHttp extends IntentService {
             I1.setAction("com.miser.li.miser.CONVERSATION");//(MainActivity.CONVERSATION_CHANGED_ACTION);
             I1.putExtras(bundle);
             sendBroadcast(I1);
+            mMsgBeanList.clear();
         }
     }
 
@@ -158,8 +160,8 @@ public class IntentServiceHttp extends IntentService {
     {
         reqBuilder.addHeader("Accept","application/json, text/javascript, */*; q=0.01");
         //reqBuilder.addHeader("Accept-Encoding","gzip, deflate, sdch");//服务端没有压缩
-        reqBuilder.addHeader("Connection","keep-alive");
-        reqBuilder.addHeader("Cookie",mcookstr);//"user=MDp0eDNtYWppYTg6Ok5vbmU6NTAwOjM1OTMzMjQzNTo3LDExMTExMTExMTExLDQwOzQ0LDExLDQwOzYsMSw0MDs1LDEsNDA6Mzo6OjM0OTMzMjQzNToxNDczNDM1MTY5Ojo6MTQ3MTE1NTI0MDo2MDQ4MDA6MDpmMzBhMDVkMjI4MzIzNWY3YTE5ODBlOWU5NGNmNzgxMzpkZWZhdWx0XzI6MA%3D%3D; userid=349332435; u_name=tx3majia8; escapename=tx3majia8; ticket=801e9f1d86559834352871a14a4afffe; Hm_lvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473435129,1473476007; Hm_lpvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473476007; Hm_lvt_78c58f01938e4d85eaf619eae71b4ed1=1473435129,1473476007; Hm_lpvt_78c58f01938e4d85eaf619eae71b4ed1=1473476007");//mcookstr);
+        reqBuilder.addHeader("Connection","keep-alive");//mcookstr);
+        reqBuilder.addHeader("Cookie","user=MDp0eDNtYWppYTg6Ok5vbmU6NTAwOjM1OTMzMjQzNTo3LDExMTExMTExMTExLDQwOzQ0LDExLDQwOzYsMSw0MDs1LDEsNDA6Mzo6OjM0OTMzMjQzNToxNDczNDM1MTY5Ojo6MTQ3MTE1NTI0MDo2MDQ4MDA6MDpmMzBhMDVkMjI4MzIzNWY3YTE5ODBlOWU5NGNmNzgxMzpkZWZhdWx0XzI6MA%3D%3D; userid=349332435; u_name=tx3majia8; escapename=tx3majia8; ticket=801e9f1d86559834352871a14a4afffe; Hm_lvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473435129,1473476007; Hm_lpvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473476007; Hm_lvt_78c58f01938e4d85eaf619eae71b4ed1=1473435129,1473476007; Hm_lpvt_78c58f01938e4d85eaf619eae71b4ed1=1473476007");//mcookstr);
         reqBuilder.addHeader("Referer","http://t.10jqka.com.cn/circle/8530");
         reqBuilder.addHeader("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.101 Safari/537.36");
         reqBuilder.addHeader("X-Requested-With","XMLHttpRequest");
@@ -284,12 +286,13 @@ public class IntentServiceHttp extends IntentService {
                             if (exist.equals(alarmsBean))
                             {
                                 bExist = true;
+                                break;
                             }
                         }
                         if (!bExist)//该数据是新的
                         {
                             mAlarmsBeanList.add(alarmsBean);
-                            //mNewAlarmsBeanList.add(alarmsBean);
+                            mNewAlarmsBeanList.add(alarmsBean);
                         }
                     }
                 }
@@ -309,15 +312,16 @@ public class IntentServiceHttp extends IntentService {
         }
 
         //return mNewAlarmsBeenList;
-        if (!mAlarmsBeanList.isEmpty()) {
+        if (!mNewAlarmsBeanList.isEmpty()) {
             bundle = new Bundle();
-
-            mlist.add(mAlarmsBeanList);
+            mlist.clear();
+            mlist.add(mNewAlarmsBeanList);
             bundle.putParcelableArrayList("list", mlist);
             Intent I1 = new Intent();
             I1.setAction("com.miser.li.miser.ALARMS");//(MainActivity.CONVERSATION_CHANGED_ACTION);
             I1.putExtras(bundle);
             sendBroadcast(I1);
+            mNewAlarmsBeanList.clear();
             //Thread.sleep(50000);
             //mNewAlarmsBeanList.clear();
         }
@@ -336,8 +340,9 @@ public class IntentServiceHttp extends IntentService {
         {
             try
             {
-                getConversationAndSendIntent();
+
                getAlarmsAndSendIntent();
+                getConversationAndSendIntent();
                 Thread.sleep(2000);
             } catch (InterruptedException e)
             {

@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
 
                 android:maxLines="1"
-                android:textSize="25px"
+                android:textSize="10sp"
                 android:text="mastername"/>
 
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="3dp"
                 android:maxLines="1"
-                android:textSize="50px"
+                android:textSize="18sp"
                 android:text="sharesname"/>
 
             <LinearLayout
