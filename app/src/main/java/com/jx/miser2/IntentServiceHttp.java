@@ -50,9 +50,9 @@ public class IntentServiceHttp extends IntentService {
     private List<BeanAlarms> mNewAlarmsBeanList = new ArrayList<BeanAlarms>();
     private ArrayList mlist = new ArrayList();//消息广播传递参数不能为局部变量，可能被销毁
     private String mcookstr;//保存cookies
-   //// private Logger gLogger;
+   private Logger gLogger;
 
-    /*public void configLog()
+    public void configLog()
     {
         final LogConfigurator logConfigurator = new LogConfigurator();
 
@@ -63,9 +63,9 @@ public class IntentServiceHttp extends IntentService {
         logConfigurator.setLevel("org.apache", Level.ERROR);
         logConfigurator.configure();
 
-        //gLogger = Logger.getLogger(this.getClass());
-        //gLogger = Logger.getLogger("miser");
-    }*/
+        gLogger = Logger.getLogger(this.getClass());
+        gLogger = Logger.getLogger("miser");
+    }
 
     public IntentServiceHttp() {
         //必须实现父类的构造方法
@@ -73,7 +73,7 @@ public class IntentServiceHttp extends IntentService {
         mcookstr = readFileSdcardFile("/mnt/sdcard/miser.cook");
         addHttpHeaders(mReqBuilderA);
         //gLogger = Logger.getLogger("miser");
-       // configLog();
+       configLog();
     }
 
     @Override
@@ -161,7 +161,7 @@ public class IntentServiceHttp extends IntentService {
         reqBuilder.addHeader("Accept","application/json, text/javascript, */*; q=0.01");
         //reqBuilder.addHeader("Accept-Encoding","gzip, deflate, sdch");//服务端没有压缩
         reqBuilder.addHeader("Connection","keep-alive");//mcookstr);
-        reqBuilder.addHeader("Cookie","user=MDp0eDNtYWppYTg6Ok5vbmU6NTAwOjM1OTMzMjQzNTo3LDExMTExMTExMTExLDQwOzQ0LDExLDQwOzYsMSw0MDs1LDEsNDA6Mzo6OjM0OTMzMjQzNToxNDczNDM1MTY5Ojo6MTQ3MTE1NTI0MDo2MDQ4MDA6MDpmMzBhMDVkMjI4MzIzNWY3YTE5ODBlOWU5NGNmNzgxMzpkZWZhdWx0XzI6MA%3D%3D; userid=349332435; u_name=tx3majia8; escapename=tx3majia8; ticket=801e9f1d86559834352871a14a4afffe; Hm_lvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473435129,1473476007; Hm_lpvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473476007; Hm_lvt_78c58f01938e4d85eaf619eae71b4ed1=1473435129,1473476007; Hm_lpvt_78c58f01938e4d85eaf619eae71b4ed1=1473476007");//mcookstr);
+        reqBuilder.addHeader("Cookie",mcookstr);//"user=MDp0eDNtYWppYTg6Ok5vbmU6NTAwOjM1OTMzMjQzNTo3LDExMTExMTExMTExLDQwOzQ0LDExLDQwOzYsMSw0MDs1LDEsNDA6Mzo6OjM0OTMzMjQzNToxNDczNDM1MTY5Ojo6MTQ3MTE1NTI0MDo2MDQ4MDA6MDpmMzBhMDVkMjI4MzIzNWY3YTE5ODBlOWU5NGNmNzgxMzpkZWZhdWx0XzI6MA%3D%3D; userid=349332435; u_name=tx3majia8; escapename=tx3majia8; ticket=801e9f1d86559834352871a14a4afffe; Hm_lvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473435129,1473476007; Hm_lpvt_da7579fd91e2c6fa5aeb9d1620a9b333=1473476007; Hm_lvt_78c58f01938e4d85eaf619eae71b4ed1=1473435129,1473476007; Hm_lpvt_78c58f01938e4d85eaf619eae71b4ed1=1473476007");//mcookstr);
         reqBuilder.addHeader("Referer","http://t.10jqka.com.cn/circle/8530");
         reqBuilder.addHeader("User-Agent","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.101 Safari/537.36");
         reqBuilder.addHeader("X-Requested-With","XMLHttpRequest");
